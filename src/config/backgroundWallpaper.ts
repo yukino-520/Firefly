@@ -53,8 +53,8 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		mobile: [
 			"https://tu.ztyukino.com/file/1778325918304_206cfeeae02eba93e05e0a75e5b92d78_720.png",
 			"https://tu.ztyukino.com/file/1778325926167_78b1073a2e7e84b21336aec2809a24a2_720.png",
-			"assets/images/MobileWallpaper/m3.avif",
-			"assets/images/MobileWallpaper/m6.avif",
+			"https://tu.ztyukino.com/file/1778326817504_e61723ebffa8a2aaf01ab49417cb0fc6_720.png",
+			"https://tu.ztyukino.com/file/1778327046634_73146c1ea56dcac1ad0ec0940d5799e0_720.png",
 		],
 	},
 	// 横幅壁纸和全屏壁纸共享配置

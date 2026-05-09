@@ -16,7 +16,7 @@ export const commentConfig: CommentConfig = {
 	//waline评论系统配置
 	waline: {
 		// waline 后端服务地址
-		serverURL: "https://waline.vercel.app",
+		serverURL: "https://waline-server-three-delta.vercel.app",
 		// 设置 Waline 评论系统语言
 		lang: "zh-CN",
 		// 设置 Waline 评论系统表情地址
@@ -47,7 +47,7 @@ export const commentConfig: CommentConfig = {
 	//giscus评论系统配置
 	giscus: {
 		// 设置 Giscus 评论系统仓库
-		repo: "CuteLeaf/Firefly",
+		repo: "yukino-520/Firefly",
 		// 设置 Giscus 评论系统仓库ID
 		repoId: "R_kgD2gfdFGd",
 		// 设置 Giscus 评论系统分类
