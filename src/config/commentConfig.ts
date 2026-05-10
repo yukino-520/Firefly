@@ -66,8 +66,8 @@ export const commentConfig: CommentConfig = {
 		inputPosition: "top",
 		// 获取 Giscus 评论系统语言
 		lang: "zh-CN",
-		// 获取 Giscus 评论系统加载方式
-		loading: "lazy",
+		// 获取 Giscus 评论系统加载方式（eager=立即加载，lazy=懒加载）
+		loading: "eager",
 	},
 
 	//disqus评论系统配置
