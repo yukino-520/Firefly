@@ -47,6 +47,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			"https://tu.ztyukino.com/file/1778321109100_1_15488489008035.jpeg",
 			"https://tu.ztyukino.com/file/1778321101138_1_154884390000155.jpeg",
 			"https://tu.ztyukino.com/file/1778321109537_6_15488491008679.jpeg",
+			"https://tu.ztyukino.com/file/1778386808167_77ce1fbf6c78082bd84c6691eea75702_720.png"
 		],
 		// 移动背景图片（支持单张或多张随机）
 		// mobile: "assets/images/MobileWallpaper/m1.avif",

@@ -65,22 +65,28 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		// 子菜单
 		children: [
 			{
-				name: "GitHub",
-				url: "https://github.com/yukino-520/Firefly",
+				name: "bilibili",
+				url: "https://space.bilibili.com/470794027",
 				external: true,
-				icon: "fa7-brands:github",
-			},
-			{
-				name: "Gitee",
-				url: "https://gitee.com/yukino555/Firefly",
-				external: true,
-				icon: "fa7-brands:gitee",
+				icon: "fa7-brands:bilibili",
 			},
 			{
 				name: "QQ",
 				url: "https://qm.qq.com/q/Rcp99i5x6",
 				external: true,
 				icon: "fa7-brands:qq",
+			},
+			{
+				name: "Wechat",
+				url: "https://tu.ztyukino.com/file/1778377104100_5659f1393cf7e517bf7472a116a4434d_720.png",
+				external: true,
+				icon: "fa7-brands:weixin",
+			},
+			{
+				name: "GitHub",
+				url: "https://github.com/yukino-520/Firefly",
+				external: true,
+				icon: "fa7-brands:github",
 			},
 		],
 	});

@@ -74,9 +74,9 @@ export const siteConfig: SiteConfig = {
 		// 3. 本地图片（src目录，自动优化但会增加构建时间，推荐）: { type: "image", value: "assets/images/logo.webp", alt: "Logo" }
 		// 4. 网络图片: { type: "url", value: "https://example.com/logo.png", alt: "Logo" }
 		logo: {
-			type: "image",
-			value: "assets/images/firefly.png",
-			alt: "🍀",
+			type: "url",
+			value: "https://tu.ztyukino.com/file/1778392940355_o4XBAXhfA6F0igAyEDcUY4iBQigZGOApkdnHIA_tplv-0wx4r9yasq-awebp-resize_0_0.webp",
+			alt: "https://tu.ztyukino.com/file/1778392273628_a81e3fbe5e5f6f3850c58f3af7dca7f5_720.png",
 		},
 		// 导航栏标题
 		title: "yukino",
@@ -179,7 +179,7 @@ export const siteConfig: SiteConfig = {
 		// Umami 统计配置
 		umamiAnalytics: {
 			// Umami Website ID
-			websiteId: "",
+			websiteId: "2c279fd0-51bc-4119-81b5-6c4229a4842c",
 			// Umami JS地址，支持使用自建
 			scriptUrl: "https://cloud.umami.is/script.js",
 			// 是否追踪出站链接
