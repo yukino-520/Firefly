@@ -57,7 +57,7 @@ export const siteConfig: SiteConfig = {
 	favicon: [
 		{
 			// 图标文件路径
-			src: "/favicon/favicon.ico",
+			src: "https://tu.ztyukino.com/file/1778394994410_oU3CiInxaTBiLrjbAAVAQArssvzdiPMEBA3iI_tplv-0wx4r9yasq-webp-resize_0_0.webp",
 			// 可选，指定主题 'light' | 'dark'
 			// theme: "light",
 			// 可选，图标大小
