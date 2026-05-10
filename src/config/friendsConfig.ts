@@ -27,7 +27,7 @@ export const friendsConfig: FriendLink[] = [
 		imgurl:
 			"https://tu.ztyukino.com/file/1778322126543_微信图片_2026-05-09_182135_917.jpg",
 		desc: "一个现充",
-		siteurl: "https://blog.cuteleaf.cn",
+		siteurl: "https://blog.ztyukino.com",
 		tags: ["Blog"],
 		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
