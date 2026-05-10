@@ -89,8 +89,7 @@ export const live2dModelConfig: Live2DModelConfig = {
 	// Live2D模型配置
 	model: {
 		// Live2D模型文件路径
-		path: "/pio/models/live2d/snow_miku/model.json",
-		// path: "/pio/models/live2d/illyasviel/illyasviel.model.json",
+		path: "/pio/models/live2d/xiaomai/xiaomai.model.json",
 	},
 
 	// 位置配置
@@ -117,11 +116,12 @@ export const live2dModelConfig: Live2DModelConfig = {
 		enabled: true,
 		// 点击时随机显示的文字消息，motions 和 expressions 将从模型 JSON 文件中自动读取
 		clickMessages: [
-			"你好！我是Miku~",
-			"有什么需要帮助的吗？",
-			"今天天气真不错呢！",
-			"要不要一起玩游戏？",
-			"记得按时休息哦！",
+			"お兄ちゃん！一起打游戏吧~🎮",
+			"今天也要加油哦！✨",
+			"想喝可乐~🥤",
+			"薯片给我！🍿",
+			"好困...再睡一会儿~💤",
+			"嘿嘿，我是干物妹小埋！🐹",
 		],
 		// 随机显示的文字消息显示时间（毫秒）
 		messageDisplayTime: 3000,
