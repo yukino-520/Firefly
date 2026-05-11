@@ -62,6 +62,26 @@ export const friendsConfig: FriendLink[] = [
 		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+	{
+		title: "团子和蛋糕",
+		imgurl:
+			"https://re.tsh520.cn/zl/tx.webp",
+		desc: "如果你喜欢那么欢迎来到我的世界！",
+		siteurl: "https://blog.tsh520.cn",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
+	{
+		title: "MmzMing",
+		imgurl:
+			"https://i.stardots.io/784774835/StarDots-2026051117505284739.webp",
+		desc: "神人的博客",
+		siteurl: "https://tblog.mmzhiku.xyz",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
