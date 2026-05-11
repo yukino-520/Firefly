@@ -42,6 +42,26 @@ export const friendsConfig: FriendLink[] = [
 		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+	{
+		title: "xf_blog",
+		imgurl:
+			"https://github.com/lm-xiao-fen/lm-xiao-fen.github.io/blob/main/image/MEITU_20260128_220225596.jpg?raw=true",
+		desc: "立志用 cloudflare workers，GitHub pages 和 vercel 做出整个互联网的up（虽然不会成功",
+		siteurl: "https://lm-xiao-fen.github.io",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
+	{
+		title: "UpXuu's blog",
+		imgurl:
+			"https://upxuu.com/images/20260214145619.jpg",
+		desc: "逐光而上",
+		siteurl: "https://upxuu.com",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
