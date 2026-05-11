@@ -82,6 +82,16 @@ export const friendsConfig: FriendLink[] = [
 		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
 	},
+	{
+		title: "NNNullptr南",
+		imgurl:
+			"https://tu.ztyukino.com/file/O9BKhBj0.png",
+		desc: "数学生的古早拼贴风格网站",
+		siteurl: "https://xnmoe.com",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+	},
 ];
 
 // 获取启用的友链并进行排序
