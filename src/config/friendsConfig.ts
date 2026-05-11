@@ -26,7 +26,7 @@ export const friendsConfig: FriendLink[] = [
 		title: "yukino",
 		imgurl:
 			"https://tu.ztyukino.com/file/1778322126543_微信图片_2026-05-09_182135_917.jpg",
-		desc: "一个现充",
+		desc: "一个现充的个人博客网站",
 		siteurl: "https://blog.ztyukino.com",
 		tags: ["Blog"],
 		weight: 10, // 权重，数字越大排序越靠前
