@@ -24,8 +24,7 @@ export const friendsPageConfig: FriendsPageConfig = {
 export const friendsConfig: FriendLink[] = [
 	{
 		title: "fqzlr",
-		imgurl:
-			"https://q1.qlogo.cn/g?b=qq&nk=20447289&s=640",
+		imgurl: "https://q1.qlogo.cn/g?b=qq&nk=20447289&s=640",
 		desc: "坐而言不如起而行.",
 		siteurl: "https://fqzlr.com/",
 		tags: ["Blog"],
@@ -44,8 +43,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "UpXuu's blog",
-		imgurl:
-			"https://upxuu.com/images/20260214145619.jpg",
+		imgurl: "https://upxuu.com/images/20260214145619.jpg",
 		desc: "逐光而上",
 		siteurl: "https://upxuu.com",
 		tags: ["Blog"],
@@ -54,8 +52,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "团子和蛋糕",
-		imgurl:
-			"https://re.tsh520.cn/zl/tx.webp",
+		imgurl: "https://re.tsh520.cn/zl/tx.webp",
 		desc: "如果你喜欢那么欢迎来到我的世界！",
 		siteurl: "https://blog.tsh520.cn",
 		tags: ["Blog"],
@@ -64,8 +61,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "MmzMing",
-		imgurl:
-			"https://i.stardots.io/784774835/StarDots-2026051117505284739.webp",
+		imgurl: "https://i.stardots.io/784774835/StarDots-2026051117505284739.webp",
 		desc: "神人的博客",
 		siteurl: "https://tblog.mmzhiku.xyz",
 		tags: ["Blog"],
@@ -74,8 +70,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "NNNullptr南",
-		imgurl:
-			"https://tu.ztyukino.com/file/O9BKhBj0.png",
+		imgurl: "https://tu.ztyukino.com/file/O9BKhBj0.png",
 		desc: "数学生的古早拼贴风格网站",
 		siteurl: "https://xnmoe.com",
 		tags: ["Blog"],

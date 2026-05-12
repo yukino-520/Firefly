@@ -16,8 +16,7 @@ export const siteConfig: SiteConfig = {
 	site_url: "https://ztyukino.com",
 
 	// 站点描述
-	description:
-		"这是名侦探yukino的博客网站",
+	description: "这是名侦探yukino的博客网站",
 
 	// 站点关键词
 	keywords: [
@@ -75,7 +74,8 @@ export const siteConfig: SiteConfig = {
 		// 4. 网络图片: { type: "url", value: "https://example.com/logo.png", alt: "Logo" }
 		logo: {
 			type: "url",
-			value: "https://tu.ztyukino.com/file/1778392940355_o4XBAXhfA6F0igAyEDcUY4iBQigZGOApkdnHIA_tplv-0wx4r9yasq-awebp-resize_0_0.webp",
+			value:
+				"https://tu.ztyukino.com/file/1778392940355_o4XBAXhfA6F0igAyEDcUY4iBQigZGOApkdnHIA_tplv-0wx4r9yasq-awebp-resize_0_0.webp",
 			alt: "https://tu.ztyukino.com/file/1778392273628_a81e3fbe5e5f6f3850c58f3af7dca7f5_720.png",
 		},
 		// 导航栏标题
