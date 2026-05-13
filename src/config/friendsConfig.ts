@@ -70,7 +70,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "NNNullptr南",
-		imgurl: "https://tu.ztyukino.com/file/O9BKhBj0.png",
+		imgurl: "https://tu.ztyukino.com/file/photo/ENqavGsC.png",
 		desc: "数学生的古早拼贴风格网站",
 		siteurl: "https://xnmoe.com",
 		tags: ["Blog"],
