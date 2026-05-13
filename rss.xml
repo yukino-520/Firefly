@@ -1,4 +1,60 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>名侦探</title><description>yukino</description><link>https://ztyukino.com/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.10.3</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年5月12日 17:44:34</lastBuildDate><item><title>一篇文章搞懂“三色标记法”</title><link>https://ztyukino.com/posts/blog/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E6%90%9E%E6%87%82%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/</link><guid isPermaLink="true">https://ztyukino.com/posts/blog/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E6%90%9E%E6%87%82%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/</guid><description>关于三色标记法个人的理解</description><pubDate>Mon, 11 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h1&gt;1. 三色标记法是什么？&lt;a href=&quot;#1-三色标记法是什么&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;定义：三色标记法是一种&lt;strong&gt;对象遍历和标记算法&lt;/strong&gt;，用于在垃圾回收过程中区分存活对象和垃圾对象&lt;/p&gt;&lt;p&gt;好处：
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>名侦探</title><description>yukino</description><link>https://ztyukino.com/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.10.3</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年5月13日 16:33:05</lastBuildDate><item><title>虚拟线程</title><link>https://ztyukino.com/posts/blog/%E8%99%9A%E6%8B%9F%E7%BA%BF%E7%A8%8B/</link><guid isPermaLink="true">https://ztyukino.com/posts/blog/%E8%99%9A%E6%8B%9F%E7%BA%BF%E7%A8%8B/</guid><description>这是文章的简短描述</description><pubDate>Wed, 13 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;/p&gt;&lt;figure&gt;&lt;img src=&quot;https://tu.ztyukino.com/file/6Q26KQzk.png&quot; alt=&quot;image.png&quot; /&gt;&lt;figcaption&gt;image.png&lt;/figcaption&gt;&lt;/figure&gt;
+背景：
+VT：虚拟线程
+Platfrom Tread：平台线程
+Tread：操作系统线程&lt;p&gt;&lt;/p&gt;
+&lt;section&gt;&lt;h1&gt;1.  什么是虚拟线程 ？&lt;a href=&quot;#1--什么是虚拟线程-&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;虚拟线程是JDK21引入的一个新特性，它是运行在平台线程上的极其轻量级的线程，让你可以轻松开启成千上万个线程且不用担心系统崩溃。&lt;/p&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h1&gt;2. 虚拟线程为什么要出现 ？&lt;a href=&quot;#2-虚拟线程为什么要出现-&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;在虚拟线程出现之前，Java的线程是平台线程，每一个Java线程对应着一个操作系统内核线程，内核线程很“重”。创建一个线程需要分配大约 1MB 的栈内存，而且上下文切换（CPU 从一个线程换到另一个线程）需要经过昂贵的系统调用。高并发场景下，大量的请求io会导致大量线程阻塞等待，最终导致cpu资源耗尽。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;具体实例：&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;对比在&lt;strong&gt;固定线程池（平台线程）和虚拟线程&lt;/strong&gt;下，服务器的表现。&lt;/p&gt;&lt;section&gt;&lt;h6&gt;1. 传统方案：平台线程池&lt;a href=&quot;#1-传统方案平台线程池&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h6&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;// 模拟一个拥有 100 个线程的线程池&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;ExecutorService executor = Executors.newFixedThreadPool(100);&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;long start = System.currentTimeMillis();&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;// 提交 1,000 个任务，每个任务模拟 1 秒的阻塞调用&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;for (int i = 0; i &amp;lt; 1000; i++) {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;8&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;executor.submit(() -&amp;gt; {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;9&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;        &lt;/span&gt;&lt;/span&gt;&lt;span&gt;try {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;10&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;            &lt;/span&gt;&lt;/span&gt;&lt;span&gt;Thread.sleep(1000); // 模拟 I/O 阻塞：等 API 返回&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;11&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;        &lt;/span&gt;&lt;/span&gt;&lt;span&gt;} catch (InterruptedException e) { }&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;12&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;});&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;13&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;14&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;15&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;executor.shutdown();&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;16&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;executor.awaitTermination(1, TimeUnit.HOURS);&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;17&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;System.out.println(&quot;总耗时: &quot; + (System.currentTimeMillis() - start) + &quot;ms&quot;);&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;span&gt;展开&lt;/span&gt;&lt;span&gt;收起&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;发生过程：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;前 100 个请求进来，占满了 100 个线程。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;这 100 个线程全都在 &lt;code&gt;Thread.sleep&lt;/code&gt;（阻塞），&lt;strong&gt;虽然 CPU 闲着，但线程被占死了&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;剩下的 900 个请求只能在队列里排队。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;每过 1 秒，才能处理完 100 个请求。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;最终结果：&lt;/strong&gt; 处理完 1,000 个请求需要约 &lt;strong&gt;10 秒&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;痛点：&lt;/strong&gt; 哪怕 CPU 利用率不到 1%，你的服务器也快不起来，因为“坑位”（线程）有限。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;&lt;section&gt;&lt;h6&gt;2. 虚拟线程&lt;a href=&quot;#2-虚拟线程&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h6&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;// 虚拟线程执行器：随用随开&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;long start = System.currentTimeMillis();&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;for (int i = 0; i &amp;lt; 1000; i++) {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;        &lt;/span&gt;&lt;/span&gt;&lt;span&gt;executor.submit(() -&amp;gt; {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;            &lt;/span&gt;&lt;/span&gt;&lt;span&gt;try {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;8&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;                &lt;/span&gt;&lt;/span&gt;&lt;span&gt;Thread.sleep(1000); // 这里的阻塞会触发“卸载”&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;9&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;            &lt;/span&gt;&lt;/span&gt;&lt;span&gt;} catch (InterruptedException e) { }&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;10&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;        &lt;/span&gt;&lt;/span&gt;&lt;span&gt;});&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;11&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;12&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;// try-with-resources 会等待所有虚拟线程执行完毕&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;13&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;14&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;System.out.println(&quot;总耗时: &quot; + (System.currentTimeMillis() - start) + &quot;ms&quot;);&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;发生过程：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;1,000 个虚拟线程瞬间被创建（它们只占用极少内存）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;当第一个虚拟线程执行到 &lt;code&gt;Thread.sleep&lt;/code&gt; 时，JVM 发现它要阻塞了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;核心魔法：&lt;/strong&gt; JVM 立即把这个虚拟线程从底层的内核线程（Carrier Thread）上“卸载”下来，让内核线程去处理第二个、第三个……第 1,000 个虚拟线程。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;这 1,000 个虚拟线程几乎&lt;strong&gt;同时&lt;/strong&gt;进入了等待状态，且没有霸占昂贵的内核线程。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;最终结果：&lt;/strong&gt; 处理完 1,000 个请求只需要约 &lt;strong&gt;1 秒多一点&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h1&gt;总结&lt;a href=&quot;#总结&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;虚拟线程最大的好处不是让单次任务变快（它甚至比内核线程慢一点点点），而是极大地提高了系统的并发能力（吞吐量）。它让你可以用阻塞式的简单代码，跑出非阻塞式的超高性能。&lt;/p&gt;&lt;/section&gt;</content:encoded></item><item><title>一篇文章搞懂“三色标记法”</title><link>https://ztyukino.com/posts/blog/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E6%90%9E%E6%87%82%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/</link><guid isPermaLink="true">https://ztyukino.com/posts/blog/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E6%90%9E%E6%87%82%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/</guid><description>关于三色标记法个人的理解</description><pubDate>Mon, 11 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h1&gt;1. 三色标记法是什么？&lt;a href=&quot;#1-三色标记法是什么&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;定义：三色标记法是一种&lt;strong&gt;对象遍历和标记算法&lt;/strong&gt;，用于在垃圾回收过程中区分存活对象和垃圾对象&lt;/p&gt;&lt;p&gt;好处：
 1. 标记时需要进行stw，需要暂停程序。三色标记法就是将stw变成并发标记，使程序一边运行一边进行标记垃圾。
 2. 避免重复扫描对象，高效遍历对象图，提升标记阶段的效率。&lt;/p&gt;&lt;/section&gt;
 &lt;section&gt;&lt;h1&gt;2. 具体内容以及应用&lt;a href=&quot;#2-具体内容以及应用&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;它将内存中的对象标记为三种颜色：&lt;/p&gt;&lt;ul&gt;
