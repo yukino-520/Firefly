@@ -1,4 +1,118 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>名侦探</title><description>yukino</description><link>https://ztyukino.com/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.10.3</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年5月16日 11:10:34</lastBuildDate><item><title>Happens-Before：并发编程中的“先后关系”</title><link>https://ztyukino.com/posts/blog/happen-before/</link><guid isPermaLink="true">https://ztyukino.com/posts/blog/happen-before/</guid><description>从可见性到有序性：理解 Java 内存模型中的 Happens-Before</description><pubDate>Sat, 16 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;在单线程程序中，我们一般很少关心“可见性”这个问题。&lt;br /&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>名侦探</title><description>yukino</description><link>https://ztyukino.com/</link><templateTheme>Firefly</templateTheme><templateThemeVersion>6.10.3</templateThemeVersion><templateThemeUrl>https://github.com/CuteLeaf/Firefly</templateThemeUrl><lastBuildDate>2026年5月21日 21:29:21</lastBuildDate><item><title>缓存更新到底是先删缓存还是先更新数据库？</title><link>https://ztyukino.com/posts/blog/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/</link><guid isPermaLink="true">https://ztyukino.com/posts/blog/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/</guid><description>缓存一致性详解</description><pubDate>Thu, 21 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h2&gt;&lt;strong&gt;一、为什么会有一致性问题&lt;/strong&gt;&lt;a href=&quot;#一为什么会有一致性问题&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;在高并发系统中，数据库通常作为最终数据源，Redis 作为缓存层提升查询性能。典型读流程是：先查缓存，缓存未命中再查数据库，并把结果写入缓存。&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;figure&gt;&lt;img src=&quot;https://tu.ztyukino.com/file/3BIBEFhu.png&quot; alt=&quot;image.png&quot; /&gt;&lt;figcaption&gt;image.png&lt;/figcaption&gt;&lt;/figure&gt;
+问题出现在写请求上。数据库和缓存是两个独立组件，更新操作无法天然保证原子性。只要其中一步失败，或者并发读写交错，就可能出现缓存和数据库数据不一致。&lt;p&gt;&lt;/p&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;二、两种更新策略 &lt;a href=&quot;#二两种更新策略&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;section&gt;&lt;h3&gt;1.&lt;strong&gt;先删除缓存，再更新数据库&lt;/strong&gt;&lt;a href=&quot;#1先删除缓存再更新数据库&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;当线程 1 先删除缓存后，如果在更新数据库的时候阻塞住了，这个时候线程 2 先去读缓存，缓存不存在，然后去数据库中读取数据，读到数据后重建缓存，这个时候缓存中仍然是旧的数据。&lt;/p&gt;&lt;p&gt;所以这种方案一般不推荐。(解决方案看后续的延迟双删模块）&lt;/p&gt;&lt;/section&gt;&lt;section&gt;&lt;h3&gt;&lt;strong&gt;2. 先更新数据库，再删除缓存&lt;/strong&gt;&lt;a href=&quot;#2-先更新数据库再删除缓存&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;这种方案看起来更加合理一些。但是可能会出现短暂的数据不一致，导致读到旧的缓存。不过这种情况一般都是可以接受的，可以保证最终的一致性。&lt;/p&gt;&lt;/section&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt; &lt;strong&gt;三、延迟双删：解决先删缓存的问题&lt;/strong&gt;&lt;a href=&quot;#三延迟双删解决先删缓存的问题&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;使用延迟双删缓解解决先删缓存存在的问题。&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;删除缓存 -&amp;gt; 更新数据库 -&amp;gt; 延迟一段时间 -&amp;gt; 再次删除缓存&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;第二次删除是为了解决重建的缓存是旧的数据。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;为什么要进行延迟删除？&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;延迟删除的目的是为了防止出现线程 2 还没来得及进行旧数据缓存的重建，导致删除是空的缓存，旧的数据缓存还是被重建了这种情况。但是延迟的时间一般是不太好控制 的。&lt;/p&gt;&lt;p&gt;延迟双删保证了最终一致性，解决了重建的是旧数据缓存，请求拿到的是旧的数据的问题。&lt;/p&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;&lt;strong&gt;四、MQ 补偿：解决删除缓存失败&lt;/strong&gt;&lt;a href=&quot;#四mq-补偿解决删除缓存失败&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;无论是先删除缓存还是先更新数据库，都有可能出现删除缓存失败的情况，为了解决删除缓存失败，可以使用 MQ 做补偿。&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;更新数据库&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;删除缓存&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;如果删除失败，发送 MQ 消息&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;消费者异步重试删除缓存&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;多次失败后记录日志/告警&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;示例伪代码:&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;public void updateData(Data data) {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;updateDatabase(data);&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;try {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;        &lt;/span&gt;&lt;/span&gt;&lt;span&gt;redis.delete(cacheKey);&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;} catch (Exception e) {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;7&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;        &lt;/span&gt;&lt;/span&gt;&lt;span&gt;mq.send(new CacheDeleteMessage(cacheKey));&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;8&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;9&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;消费者&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;public void consume(CacheDeleteMessage message) {&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;&lt;span&gt;    &lt;/span&gt;&lt;/span&gt;&lt;span&gt;redis.delete(message.getKey());&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;&lt;strong&gt;六、Canal：进一步解耦业务和缓存删除&lt;/strong&gt;&lt;a href=&quot;#六canal进一步解耦业务和缓存删除&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;MQ 补偿虽然能解决失败重试，但业务代码里还是要写删除缓存或发送消息的逻辑。为了进一步解耦，可以使用 Canal  监听 MySQLbinlog。&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;业务只更新 MySQL&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;MySQL 产生 binlog&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;Canal 监听 binlog&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;解析变更表和主键&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;5&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;发送缓存删除消息&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;消费者删除 Redis&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;优点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;业务代码不需要关心缓存删除&lt;/li&gt;
+&lt;li&gt;多个服务修改同一张表，也能统一监听&lt;/li&gt;
+&lt;li&gt;缓存失效逻辑集中处理&lt;/li&gt;
+&lt;li&gt;更适合复杂系统&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2&gt;总结&lt;a href=&quot;#总结&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;缓存一致性的关键不是追求绝对强一致，而是明确数据库是最终事实来源，缓存是可丢弃的加速层，通过删除缓存、失败重试、TTL  和 binlog 监听等方式保证最终一致。&lt;/p&gt;&lt;/section&gt;</content:encoded></item><item><title>一篇文章搞懂常见限流算法：固定窗口、滑动窗口、漏桶和令牌桶</title><link>https://ztyukino.com/posts/blog/%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/</link><guid isPermaLink="true">https://ztyukino.com/posts/blog/%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95/</guid><description>限流算法详解</description><pubDate>Thu, 21 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;section&gt;&lt;h1&gt;一、为什么需要限流&lt;a href=&quot;#一为什么需要限流&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;先从业务场景引入：&lt;/p&gt;&lt;p&gt;在高并发系统中，如果瞬时流量超过系统承载能力，可能会导致接口响应变慢、线程池耗尽、数据库连接打满，甚至服务雪崩。限流的目的就是在流量进入系统之前做控制，保护核心服务稳定运行。&lt;/p&gt;&lt;p&gt;常见场景包括：&lt;/p&gt;&lt;p&gt;秒杀、抢购、热点活动
+API 网关限制访问频率
+防止恶意请求或爬虫
+保护下游服务、数据库、第三方接口
+多租户系统中限制单个用户或应用的资源占用&lt;/p&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;二、什么是限流&lt;/strong&gt;&lt;a href=&quot;#二什么是限流&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;限流就是限制单位时间内允许通过的请求数量。当请求超过阈值时，系统可以选择拒绝请求、排队等待、降级处理，或者返回提示信息。&lt;/p&gt;&lt;p&gt;比如：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;限制某个接口每秒最多处理 100 个请求&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;限制某个用户每分钟最多发送 10 条短信&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;限制某个 IP 每小时最多调用 1000 次 API&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;三、固定窗口计数器&lt;/strong&gt;&lt;a href=&quot;#三固定窗口计数器&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;固定窗口计数器是最简单的限流算法。&lt;/p&gt;&lt;p&gt;它把时间划分成固定窗口，比如 1 秒一个窗口，然后统计当前窗口内的请求数量。如果数量超过阈值，就拒绝请求。&lt;/p&gt;&lt;p&gt;示例：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;限制每秒最多 100 个请求&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;00:00:01 - 00:00:02 这个窗口内，计数不能超过 100&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;优点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;实现简单&lt;/li&gt;
+&lt;li&gt;内存占用低&lt;/li&gt;
+&lt;li&gt;性能好
+缺点：&lt;/li&gt;
+&lt;li&gt;有临界问题&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;比如限制每秒 100 次请求：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;第 1 秒的最后 10ms 进入 100 个请求&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;第 2 秒的前 10ms 又进入 100 个请求&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;从窗口角度看都没超限，但在 20ms 内实际通过了 200 个请求，瞬时流量翻倍。&lt;/p&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;四、滑动窗口计数器&lt;/strong&gt;&lt;a href=&quot;#四滑动窗口计数器&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;滑动窗口是对固定窗口的优化。&lt;/p&gt;&lt;p&gt;它把一个大窗口拆成多个小窗口，然后随着时间推移不断滑动。比如把 1 分钟拆成 6 个 10 秒的小窗口，每次统计最近 1 分钟内所有小窗口的请求总数。&lt;/p&gt;&lt;p&gt;优点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;比固定窗口更平滑&lt;/li&gt;
+&lt;li&gt;能缓解临界突刺问题&lt;/li&gt;
+&lt;li&gt;统计结果更接近真实流量&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;缺点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;实现比固定窗口复杂&lt;/li&gt;
+&lt;li&gt;小窗口越多，统计越精确，但内存和计算成本越高&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;五、漏桶算法&lt;/strong&gt;&lt;a href=&quot;#五漏桶算法&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;漏桶算法可以把系统想象成一个桶：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;请求像水一样进入桶&lt;/li&gt;
+&lt;li&gt;桶以固定速率漏水，也就是处理请求&lt;/li&gt;
+&lt;li&gt;如果桶满了，新的请求会被丢弃或拒绝&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;优点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;输出流量非常平滑&lt;/li&gt;
+&lt;li&gt;可以保护下游服务&lt;/li&gt;
+&lt;li&gt;适合削峰填谷&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;缺点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;不能很好应对突发流量&lt;/li&gt;
+&lt;li&gt;即使系统此时有空闲能力，也只能按固定速率处理&lt;/li&gt;
+&lt;li&gt;请求可能需要排队，增加延迟&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;适用场景：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;保护下游服务&lt;/li&gt;
+&lt;li&gt;消息队列消费限速&lt;/li&gt;
+&lt;li&gt;第三方接口调用限速&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;六、令牌桶算法&lt;/strong&gt;&lt;a href=&quot;#六令牌桶算法&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;令牌桶是实际业务中非常常用的限流算法。&lt;/p&gt;&lt;p&gt;它的核心思想是：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;系统按固定速率往桶里放令牌&lt;/li&gt;
+&lt;li&gt;请求到来时，必须拿到令牌才能通过&lt;/li&gt;
+&lt;li&gt;没有令牌时，请求被拒绝或等待&lt;/li&gt;
+&lt;li&gt;桶有容量上限，令牌满了之后不会继续增加&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;和漏桶不同的是，令牌桶允许一定程度的突发流量。&lt;/p&gt;&lt;p&gt;比如：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;令牌生成速率：每秒 100 个&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;桶容量：200 个&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;如果系统空闲了一段时间，桶里最多可以积累 200 个令牌。下一秒突然来了 200 个请求，也可以一次性放行。&lt;/p&gt;&lt;p&gt;优点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;支持突发流量&lt;/li&gt;
+&lt;li&gt;平均速率可控&lt;/li&gt;
+&lt;li&gt;比漏桶更灵活&lt;/li&gt;
+&lt;li&gt;应用非常广泛&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;缺点：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;实现稍复杂&lt;/li&gt;
+&lt;li&gt;需要维护令牌生成时间、桶容量、剩余令牌数&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;适用场景：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;API 网关限流&lt;/li&gt;
+&lt;li&gt;用户访问频率控制&lt;/li&gt;
+&lt;li&gt;分布式服务接口保护&lt;/li&gt;
+&lt;li&gt;Guava RateLimiter、Sentinel 等组件中常见&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;七、漏桶和令牌桶的区别&lt;/strong&gt;&lt;a href=&quot;#七漏桶和令牌桶的区别&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;对比点&lt;/th&gt;&lt;th&gt;漏桶算法&lt;/th&gt;&lt;th&gt;令牌桶算法&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;控制对象&lt;/td&gt;&lt;td&gt;控制请求流出速度&lt;/td&gt;&lt;td&gt;控制请求是否能通过&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;处理速度&lt;/td&gt;&lt;td&gt;固定速率&lt;/td&gt;&lt;td&gt;平均速率固定，可突发&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;突发流量&lt;/td&gt;&lt;td&gt;不友好&lt;/td&gt;&lt;td&gt;支持一定突发&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;典型作用&lt;/td&gt;&lt;td&gt;平滑流量&lt;/td&gt;&lt;td&gt;限制平均速率&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;适用场景&lt;/td&gt;&lt;td&gt;削峰、保护下游&lt;/td&gt;&lt;td&gt;API 限流、网关限流&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;漏桶强调以固定速率处理请求，令牌桶强调以固定速率生成访问资格，因此令牌桶更适合允许短时间突发的业务场景。&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;八、分布式限流&lt;/strong&gt;&lt;a href=&quot;#八分布式限流&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;如果是单机服务，限流可以直接在内存中完成。但在分布式系统中，一个服务通常会部署多个实例，如果每个实例都单独限流，就可能导致整体限流失效。&lt;/p&gt;&lt;p&gt;比如：&lt;/p&gt;&lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;接口限制每秒 100 次&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;服务部署了 5 台机器&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;如果每台机器都限制 100 次&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;4&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;最终整体可能变成每秒 500 次&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;p&gt;所以分布式限流通常需要借助 Redis、网关或专门的限流组件。&lt;/p&gt;&lt;p&gt;常见方案：&lt;/p&gt;&lt;ul&gt;
+&lt;li&gt;Redis + Lua 脚本实现原子计数&lt;/li&gt;
+&lt;li&gt;API 网关统一限流&lt;/li&gt;
+&lt;li&gt;Sentinel、Hystrix、Resilience4j 等组件&lt;/li&gt;
+&lt;li&gt;Nginx 限流模块&lt;/li&gt;
+&lt;/ul&gt;&lt;/section&gt;&lt;section&gt;&lt;h2&gt;&lt;strong&gt;九、实际选择建议&lt;/strong&gt;&lt;a href=&quot;#九实际选择建议&quot;&gt;&lt;span&gt;#&lt;/span&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;简单接口限流：固定窗口计数器&lt;/li&gt;
+&lt;li&gt;对精度要求更高：滑动窗口&lt;/li&gt;
+&lt;li&gt;需要平滑处理请求：漏桶算法&lt;/li&gt;
+&lt;li&gt;允许突发但限制平均速率：令牌桶算法&lt;/li&gt;
+&lt;li&gt;分布式系统：Redis、网关或 Sentinel&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;限流的本质不是简单地拒绝请求，而是在系统承载能力和用户体验之间取得平衡。固定窗口实现简单但存在临界突刺问题，滑动窗口更精确，漏桶适合平滑流量，令牌桶则在控制平均速率的同时允许一定突发流量。实际项目中，需要结合业务场景、系统容量、部署架构和用户体验选择合适的限流方案。&lt;/p&gt;&lt;/section&gt;&lt;/section&gt;</content:encoded></item><item><title>Happens-Before：并发编程中的“先后关系”</title><link>https://ztyukino.com/posts/blog/happen-before/</link><guid isPermaLink="true">https://ztyukino.com/posts/blog/happen-before/</guid><description>从可见性到有序性：理解 Java 内存模型中的 Happens-Before</description><pubDate>Sat, 16 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;在单线程程序中，我们一般很少关心“可见性”这个问题。&lt;br /&gt;
 例如：&lt;/p&gt;
 &lt;div&gt;&lt;figure&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;pre&gt;&lt;code&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;int x = 0;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;x = 1;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;3&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;System.out.println(x);&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;
 &lt;p&gt;这段代码的结果很显然就是1，这是因为所有操作都在一个线程中，前面写入的自然而然地会被后面读到。
