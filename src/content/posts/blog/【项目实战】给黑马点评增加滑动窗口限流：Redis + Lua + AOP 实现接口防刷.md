@@ -2,13 +2,13 @@
 title: 【项目实战】给黑马点评增加滑动窗口限流：Redis + Lua + AOP 实现接口防刷
 author: yukino
 published: 2026-06-08
-created: 2026-06-08
 description: 给黑马点评增加滑动窗口
 tags:
   - Java
   - 项目实战
 category: 后端开发
 draft: false
+updated: 2026-06-08
 ---
 **前言**
 
@@ -36,7 +36,6 @@ public Result seckillVoucher(@PathVariable("id") Long voucherId) {
     return voucherOrderService.seckillVoucher(voucherId);
 
 }
-java运行
 ```
 
 表示： **10 秒内最多允许访问 10 次，超过后直接限流。**
@@ -333,13 +332,12 @@ public class RateLimiterAspect {
     }
 
 }
-java运行
 ```
 
 这里的重点是：
 
 ```java
-@Before("@annotation(rateLimiter)")java运行
+@Before("@annotation(rateLimiter)")
 ```
 
 它会拦截所有加了 @RateLimiter 注解的方法，并且可以直接拿到注解对象 rateLimiter，从而读取限流配置。
@@ -396,7 +394,6 @@ private String buildRateLimitKey(JoinPoint point, RateLimiter rateLimiter, Strin
     return keyBuilder.toString();
 
 }
-java运行
 ```
 
 如果是方法级限流，key 大概是：
@@ -417,7 +414,6 @@ public class RateLimitException extends RuntimeException {
     }
 
 }
-java运行
 ```
 
 建议在全局异常处理器中单独处理这个异常：
@@ -430,7 +426,6 @@ public Result handleRateLimitException(RateLimitException e) {
     return Result.fail(e.getMessage());
 
 }
-java运行
 ```
 
 如果不单独处理，可能会被普通 RuntimeException 捕获，最后返回“服务器异常”， 用户体验 不太好。
@@ -473,7 +468,6 @@ public class VoucherOrderController {
     }
 
 }
-java运行
 ```
 
 这样，请求进入秒杀业务之前，会先经过限流切面。
