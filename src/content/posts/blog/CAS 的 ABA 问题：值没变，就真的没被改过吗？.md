@@ -1,14 +1,14 @@
 ---
 title: CAS 的 ABA 问题：值没变，就真的没被改过吗？
-author: yukino
 published: 2026-06-01
+updated: 2026-06-08
 description: cas的aba问题
 tags:
   - 八股
   - Java
 category: 后端开发
 draft: false
-updated: 2026-06-08
+author: yukino
 ---
 在 并发编程 中，CAS 是一个非常重要的概念。
 

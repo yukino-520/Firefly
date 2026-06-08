@@ -1,14 +1,14 @@
 ---
 title: Spring 三级缓存如何解决循环依赖？
-author: yukino
 published: 2026-05-30
+updated: 2026-06-08
 description: spring三级缓存
 tags:
   - 八股
   - Java
-updated: 2026-06-08
 category: 后端开发
 draft: false
+author: yukino
 ---
 在 Spring 中，循环依赖是一个非常经典的问题。
 

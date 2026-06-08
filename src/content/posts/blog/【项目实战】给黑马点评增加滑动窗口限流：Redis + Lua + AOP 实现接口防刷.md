@@ -1,14 +1,14 @@
 ---
 title: 【项目实战】给黑马点评增加滑动窗口限流：Redis + Lua + AOP 实现接口防刷
-author: yukino
 published: 2026-06-08
+updated: 2026-06-08
 description: 给黑马点评增加滑动窗口
 tags:
   - Java
   - 项目实战
 category: 后端开发
 draft: false
-updated: 2026-06-08
+author: yukino
 ---
 **前言**
 

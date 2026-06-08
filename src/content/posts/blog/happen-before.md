@@ -1,6 +1,7 @@
 ---
 title: Happens-Before：并发编程中的“先后关系”
 published: 2026-05-16
+author: yukino
 updated: 2026-05-16
 description: 从可见性到有序性：理解 Java 内存模型中的 Happens-Before
 tags:
@@ -8,7 +9,6 @@ tags:
   - 八股
 category: 后端开发
 draft: false
-author: yukino
 ---
 在单线程程序中，我们一般很少关心“可见性”这个问题。  
 例如：
